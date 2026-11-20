@@ -3,8 +3,10 @@ the workspace sandbox."""
 from __future__ import annotations
 
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
 import urllib.request
 from pathlib import Path
 
@@ -44,6 +46,45 @@ def build_registry(sandbox: Sandbox, gate: ApprovalGate,
         proc = subprocess.run([sys.executable, "-c", code], cwd=str(sandbox.root),
                               capture_output=True, text=True, timeout=timeout)
         return (proc.stdout + proc.stderr).strip()[:8000] or "(no output)"
+
+    def _run_script_file(argv: list[str], suffix: str, code: str, label: str) -> str:
+        """Shared runner for the non-Python languages. Same safety model as
+        python_run — approval gate, workspace-only cwd, subprocess timeout,
+        capped output — plus: the code is written to a temp file INSIDE the
+        workspace and the file is executed (never shell=True, never string
+        interpolation). Timeouts and start failures come back as clean error
+        strings instead of raising."""
+        gate.require_or_raise(Action("shell", f"Run {label} code ({len(code)} chars)",
+                                     target=label))
+        tmp = tempfile.NamedTemporaryFile(
+            "w", suffix=suffix, prefix=".diviso-run-", dir=str(sandbox.root),
+            delete=False, encoding="utf-8")
+        try:
+            tmp.write(code)
+            tmp.close()
+            try:
+                proc = subprocess.run([*argv, tmp.name], cwd=str(sandbox.root),
+                                      capture_output=True, text=True, timeout=timeout)
+            except subprocess.TimeoutExpired:
+                return f"Error: {label} timed out after {timeout}s"
+            except OSError as exc:
+                return f"Error: could not start {label}: {exc}"
+            out = (proc.stdout + proc.stderr).strip()
+            if proc.returncode != 0:
+                msg = f"Error: {label} exited with code {proc.returncode}"
+                return f"{msg}\n{out}"[:8000] if out else msg
+            return out[:8000] or "(no output)"
+        finally:
+            Path(tmp.name).unlink(missing_ok=True)
+
+    node_exe = shutil.which("node")
+    bash_exe = shutil.which("bash")
+
+    def javascript_run(code: str) -> str:
+        return _run_script_file([node_exe], ".js", code, "JavaScript")
+
+    def bash_run(code: str) -> str:
+        return _run_script_file([bash_exe], ".sh", code, "Bash")
 
     def file_write(path: str, content: str) -> str:
         target = sandbox.resolve(path)
@@ -89,6 +130,11 @@ def build_registry(sandbox: Sandbox, gate: ApprovalGate,
         return duckduckgo_search(query, max_results=max_results, timeout=timeout)
 
     reg.register("python_run", python_run, "Run Python code in the workspace")
+    if node_exe:
+        reg.register("javascript_run", javascript_run,
+                     "Run JavaScript with Node.js in the workspace")
+    if bash_exe:
+        reg.register("bash_run", bash_run, "Run a Bash script in the workspace")
     reg.register("file_write", file_write, "Write a file inside the workspace")
     reg.register("file_read", file_read, "Read a file inside the workspace")
     reg.register("run_tests", run_tests, "Run pytest in the workspace")
