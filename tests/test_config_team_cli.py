@@ -78,6 +78,18 @@ def test_cli_run_mock_demo(tmp_path, monkeypatch, capsys):
     assert "Mock response to: hello diviso" in out
 
 
+def test_cli_runs_get_unique_trace_files(tmp_path, monkeypatch, capsys):
+    monkeypatch.setenv("HOME", str(tmp_path))
+    from diviso.cli import main
+    for prompt in ("first run", "second run"):
+        assert main(["--workspace", str(tmp_path), "run", "--provider", "mock",
+                     prompt]) == 0
+    capsys.readouterr()
+    trace_files = list(tmp_path.rglob("traces/*.jsonl"))
+    assert len(trace_files) == 2
+    assert all(f.stem != "run" for f in trace_files)
+
+
 def test_webui_serves_page(tmp_path):
     import threading
     import urllib.request
