@@ -3,6 +3,19 @@
 All notable changes are documented here. Format follows Keep a Changelog;
 versioning follows Semantic Versioning.
 
+## [Unreleased]
+
+### Added
+
+- Multi-language code runners: `javascript_run` (Node.js, registered only
+  when `node` is on PATH) and `bash_run`, alongside `python_run`. Same
+  safety model — approval gate, workspace-only cwd, subprocess timeout,
+  capped output; code runs from a temp file inside the workspace, and
+  timeouts/failures return clean error strings instead of raising.
+- Dashboard v2 for the web UI: gradient hero header, live device stat
+  cards with a RAM usage bar, a provider-status panel (configured or not —
+  key values are never shown), example-prompt chips, and a features grid.
+
 ## [0.1.0] - 2026-11-20
 
 ### Added
