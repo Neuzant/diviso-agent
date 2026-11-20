@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import uuid
 from pathlib import Path
 
 from . import __version__
@@ -53,8 +54,8 @@ def cmd_run(args) -> int:
     gate = ApprovalGate(auto_approve=cfg.auto_approve or args.yes,
                         callback=None if (cfg.auto_approve or args.yes) else _cli_approve)
     registry = build_registry(sandbox, gate)
-    run_id = args.run_id or None
-    tracer = TraceLogger(cfg.data_dir / "traces", run_id or "run")
+    run_id = args.run_id or uuid.uuid4().hex[:12]
+    tracer = TraceLogger(cfg.data_dir / "traces", run_id)
     agent = ReactAgent(provider, tools=registry.as_dict(), max_steps=cfg.max_steps,
                        max_cost_usd=cfg.max_cost_usd, trace_logger=tracer,
                        checkpoints=CheckpointManager(store), model=cfg.model)
