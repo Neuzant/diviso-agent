@@ -3,7 +3,7 @@
 [![CI](https://github.com/Neuzant/diviso-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/Neuzant/diviso-agent/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
-![Tests](https://img.shields.io/badge/tests-73%20passing-brightgreen.svg)
+![Tests](https://img.shields.io/badge/tests-74%20passing-brightgreen.svg)
 
 **A local-first AI agent that runs on your own machine — with any model, under your control, no cloud account required.**
 
@@ -48,9 +48,9 @@ diviso run --provider openai "Summarise this week's plan"
 ## See it running
 
 Real screenshots of the Diviso web dashboard (`diviso serve`), captured
-from the app running locally — no mockups. The Doctor stats on the cards
-(RAM, CPUs, GPU, Ollama, profile) are detected live from the machine
-serving the page.
+from the app running locally — no mockups. The system values shown in
+the dashboard (RAM, CPUs, GPU, Ollama, profile) are detected live from
+the machine serving the page.
 
 ![Diviso dashboard](docs/images/dashboard.png)
 
