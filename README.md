@@ -3,7 +3,7 @@
 [![CI](https://github.com/Neuzant/diviso-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/Neuzant/diviso-agent/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
-![Tests](https://img.shields.io/badge/tests-65%20passing-brightgreen.svg)
+![Tests](https://img.shields.io/badge/tests-73%20passing-brightgreen.svg)
 
 **A local-first AI agent that runs on your own machine — with any model, under your control, no cloud account required.**
 
@@ -101,7 +101,8 @@ src/diviso/
                   and reflects on the result
   memory/         SQLite store + MEMORY.md sync; TF-IDF RAG over local files
   team/           Researcher / Coder / Reviewer with exactly one fix pass
-  tools/          python_run, file_write (with diff), run_tests, read-only git,
+  tools/          python_run, javascript_run (Node.js, when installed),
+                  bash_run, file_write (with diff), run_tests, read-only git,
                   web_fetch, web_search — all behind the approval gate
   safety.py       approval gate (dry-run diff before any write/shell/network
                   action) + workspace sandbox
