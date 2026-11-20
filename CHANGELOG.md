@@ -16,6 +16,18 @@ versioning follows Semantic Versioning.
   cards with a RAM usage bar, a provider-status panel (configured or not —
   key values are never shown), example-prompt chips, and a features grid.
 
+### Fixed
+
+- CLI runs now get a unique run id each, so every run writes its own trace
+  file and the dashboard Activity panel lists runs individually.
+
+### Changed
+
+- Dashboard v3: the web UI was restyled from the v2 marketing look to a
+  flat developer-console layout (GitHub-dark palette, tables for System
+  and Providers, a log-style run view, a plain Capabilities list) with an
+  Activity panel listing the most recent runs recorded in the trace dir.
+
 ## [0.1.0] - 2026-11-20
 
 ### Added
